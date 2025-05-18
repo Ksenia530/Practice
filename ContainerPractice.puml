@@ -1,0 +1,56 @@
+
+
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Диаграмма контейнеров системы управления проектами
+
+
+System_Ext(email_service, "Email сервис", "SMTP")
+System_Ext(file_storage, "Облачное хранилище", "S3")
+
+Person(user, "Пользователь", "Члены команды и менеджеры")
+
+
+System_Boundary(project_system, "Система управления проектами") {
+    Container(spa, "Веб-приложение", "React", "SPA приложение на TypeScript")
+    ContainerQueue(message_broker, "Message Broker", "Rabbit", "Асинхронная коммуникация между сервисами")
+    Container(api_gateway, "API Gateway", "Nginx", "Маршрутизация запросов")
+    Container(auth_service, "Сервис аутентификации", "Node.js", "Управление сессиями и JWT")
+    Container(project_service, "Сервис проектов", "Java Spring", "Бизнес-логика проектов")
+    Container(file_service, "Сервис файлового хранилища", "Go + S3-compatible storage", "Хранение и загрузка файлов")
+    Container(user_service, "Сервис пользователей", "Node.js + MongoDB", "Управление профилями пользователей и ролями")
+    ContainerDb(db1, "БД проектов", "PostgreSQL", "Хранение проектов и задач")
+    ContainerDb(db2, "БД пользователей", "PostgreSQL", "Хранение данных пользователей")
+    ContainerDb(db3, "БД аутентификации", "PostgreSQL", "Хранение данных")
+    ContainerDb(db4, "БД файлов","PostgreSQL", "Хранение данных о файлах")
+    Container(notification_service, "Сервис уведомлений", "Node.js + Kafka", "Уведомления и события в реальном времени")
+    ContainerDb(redis, "Кэш аутентификации", "Redis", "Кэширование сессий")
+    ContainerDb(redis2, "Кэш пользователей", "Redis", "Кэширование профилей")
+}
+
+
+Rel(user, spa, "Использует систему через браузер", "HTTPS")
+Rel(spa, api_gateway, "Перенаправляет API запросы", "REST/HTTPS")
+Rel(api_gateway, auth_service, "Проверяет аутентификацию", "gRPC")
+Rel(api_gateway, project_service, "Управление проектами", "gRPC")
+Rel(api_gateway, notification_service, "Управление уведомлениями", "HTTP")
+Rel(project_service, db1, "Хранение данных", "SQL")
+Rel(api_gateway, user_service, "Управление пользователями", "gRPC")
+Rel(api_gateway, file_service, "Загрузка файлов", "REST")
+Rel(file_service, file_storage, "Сохранение файлов", "S3")
+Rel(file_service, db4, "Хранение метаданных файлов", "SQL")
+Rel(notification_service, email_service, "Отправка email уведомлений", "SMTP")
+Rel(message_broker, notification_service, "Доставляет события")
+Rel(auth_service, db3, "Хранение учетных данных", "SQL")
+Rel(auth_service, redis, "Кэширование сессий", "Redis Protocol")
+Rel(user_service, redis2, "Кэширование профилей", "Redis Protocol")
+Rel(project_service, message_broker, "Публикует project_events", "Rabbit Producer")
+Rel(user_service, db2, "Хранение данных пользователей", "SQL")
+
+@enduml
+
+
