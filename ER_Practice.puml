@@ -1,0 +1,70 @@
+@startuml
+title Project Management System 
+skinparam linetype ortho
+
+entity "Users" as e01 {
+  user_id : integer <<PK>>
+  --
+  name : varchar
+  email : varchar
+  created_at : timestamp
+  role : enum (assigner, creator)
+}
+
+
+entity "Projects" as e02 {
+  project_id : integer <<PK>>
+  --
+  *user_id : integer <<FK>>
+  title : varchar
+  description : varchar
+  start_date : timestamp
+  deadline : timestamp
+}
+
+entity "Tasks" as e03 {
+  *task_id : integer <<PK>>
+  --
+  *project_id : integer <<FK>>
+  *user_id : integer <<FK>>
+  title : varchar
+  description : text
+  priority : enum('low','medium','high')
+  status : enum('todo','in_progress','done')
+  deadline : datetime
+  created_at : timestamp
+}
+
+entity "Chats" as e04 {
+  *chat_id : integer <<PK>>
+  --
+  *user_id : integer <<FK>>
+  name : varchar
+  created_at : datetime
+}
+
+entity "File" as e05 {
+  *file_id : integer <<PK>>
+  --
+  *chat_id : integer <<FK>>
+  *user_id : integer <<FK>>
+  filename : varchar
+  filepath : varchar
+  size : integer
+  uploaded_at : timestamp
+}
+
+
+
+
+
+e01 ||--|| e02
+e04 ||--o{ e05
+e02 ||--o{ e03
+e01 ||--o{ e04
+e01 ||--o{ e05
+e01 ||--o{ e03
+
+@enduml
+
+

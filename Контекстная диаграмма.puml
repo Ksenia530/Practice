@@ -1,0 +1,25 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Контекстная диаграмма системы управления проектами
+
+
+Person(user, "Пользователь", "Члены команды и менеджеры, работающие с проектами")
+Person(admin, "Администратор", "Управляет пользователями и настройками системы")
+System_Ext(email_system, "Email сервис", "Отправка уведомлений и приглашений")
+System_Ext(storage, "Облачное хранилище", "Хранение файлов проекта (S3)")
+
+
+System(project_system, "Система управления проектами", "Организация работы команд, управление задачами, контроль сроков")
+
+
+Rel(user, project_system, "Создает проекты и задачи", "HTTPS")
+Rel(user, project_system, "Общается в чатах", "WebSocket")
+Rel(admin, project_system, "Управляет доступом")
+Rel(project_system, email_system, "Отправляет уведомления", "SMTP")
+Rel(project_system, storage, "Сохраняет файлы", "REST API")
+
+@enduml
+

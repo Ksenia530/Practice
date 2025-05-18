@@ -1,0 +1,98 @@
+@startuml
+title Диаграмма последовательности: Добавление задачи
+skinparam backgroundColor #FFF
+skinparam sequence {
+  ArrowColor #0078D7
+  ActorBorderColor #0078D7
+  LifeLineBorderColor #0078D7
+  LifeLineBackgroundColor #F0F0F0
+  ParticipantBorderColor #0078D7
+  ParticipantBackgroundColor #E1F5FE
+}
+
+actor Пользователь as user
+participant "Веб-приложение" as web
+participant "API Gateway" as api
+participant "Сервис проектов" as project
+participant "Сервис уведомлений" as notify
+database "База данных" as db
+queue "Message Broker" as mq
+
+== Добавление задачи ==
+
+
+  user -> web : Создать новую задачу
+  web -> api : POST /tasks (с JWT)
+  api -> project : CreateTask()
+  
+  alt Успешная валидация
+    project -> db : Создать задачу
+    db --> project : ID задачи
+    project -> mq : Событие "task.created"
+    mq --> notify : Обработка события
+    notify --> project : Ответ
+    project --> api : Ответ
+    api --> web : Данные задачи
+    web --> user : Отображение задачи
+  else Ошибка валидации
+    project --> api : Ошибка (400)
+    api --> web : Показать текст ошибки
+    web --> user : Уведомление об ошибке
+  end
+
+
+
+@enduml
+
+@startuml
+title Диаграмма последовательности: Загрузка файлов
+skinparam backgroundColor #FFF
+skinparam sequence {
+  ArrowColor #0078D7
+  ActorBorderColor #0078D7
+  LifeLineBorderColor #0078D7
+  LifeLineBackgroundColor #F0F0F0
+  ParticipantBorderColor #0078D7
+  ParticipantBackgroundColor #E1F5FE
+}
+
+actor Пользователь as user
+participant "Веб-приложение" as web
+participant "API Gateway" as api
+participant "Сервис файлов" as file
+database "База данных" as db
+database "Файловое хранилище" as storage
+
+== Работа с файлами ==
+
+
+  user -> web : Загрузить файл 
+  web -> api : POST /files 
+  api -> file : Передача файлов
+
+
+
+  alt Обработка файла
+    file -> storage : Сохранить файл
+    storage --> file : URL файла 
+     group Сохранение метаданных
+      file -> db : Сохранить метаданные
+      db --> file : ID записи 
+    end
+  file --> api : Успешный ответ
+  api --> web : 201 Created
+  web --> user : Отображение файла
+
+  else Ошибка отправки
+    file --> api : Ошибка (400)
+    api --> web : Показать текст ошибки
+    web --> user : "Превышен размер файла"
+  end
+
+
+
+
+@enduml
+
+
+
