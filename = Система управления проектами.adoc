@@ -87,7 +87,7 @@
 
 == Диаграмма BPMN
 
-
+image::Система управления проектами.svg[]
 
 == ER диаграмма
 
@@ -95,13 +95,13 @@ image::out/ER_Practice/ER_Practice.svg[]
 
 == Диаграммы С4
 
+=== Контекстная диаграмма
+
+image::out/ContextDia/ContextDia.svg[]
+
 === Диаграмма контейнеров
 
 image::out/ContainerPractice/ContainerPractice.svg[]
-
-=== Контекстная диаграмма
-
-
 
 == UML диаграммы
 
