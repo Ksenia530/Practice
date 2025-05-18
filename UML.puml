@@ -44,6 +44,8 @@ queue "Message Broker" as mq
 
 @enduml
 
+
+
 @startuml
 title Диаграмма последовательности: Загрузка файлов
 skinparam backgroundColor #FFF

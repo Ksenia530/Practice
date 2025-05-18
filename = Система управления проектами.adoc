@@ -101,6 +101,9 @@ image::out/ContainerPractice/ContainerPractice.svg[]
 
 === Контекстная диаграмма
 
-image:link::out/Контекстная диаграмма/Контекстная диаграмма.svg[]
 
 == UML диаграммы
+
+image::out/UML/UML-1.svg[]
+
+image::out/UML/UML.svg[]
