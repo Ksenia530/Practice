@@ -39,6 +39,7 @@ entity "Chats" as e04 {
   *chat_id : integer <<PK>>
   --
   *user_id : integer <<FK>>
+  *message_id : integer <<FK>>
   name : varchar
   created_at : datetime
 }
@@ -54,15 +55,23 @@ entity "File" as e05 {
   uploaded_at : timestamp
 }
 
+entity "Messages" as e06 {
+  *message_id : integer <<PK>>
+  --
+  *chat_id : integer <<FK>>
+  *user_id : integer <<FK>>
+  content : text
+  send_at : timestamp
+  is_read : boolean
+}
 
 
 
-
-e01 ||--|| e02
-e04 ||--o{ e05
+e01 ||--o{ e02
+e04 ||--o{ e06
 e02 ||--o{ e03
 e01 ||--o{ e04
-e01 ||--o{ e05
+e06 ||--o{ e05
 e01 ||--o{ e03
 
 @enduml
