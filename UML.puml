@@ -33,11 +33,13 @@ queue "Message Broker" as mq
     notify --> project : Ответ
     project --> api : Ответ
     api --> web : Данные задачи
-    web --> user : Отображение задачи
+    web -> web : Отображение задачи
+    user -> web : Посмотреть добавленную задачу
   else Ошибка валидации
     project --> api : Ошибка (400)
     api --> web : Показать текст ошибки
-    web --> user : Уведомление об ошибке
+    web -> web : Уведомление об ошибке
+    user -> web : Посмотреть ошибку
   end
 
 
@@ -83,12 +85,14 @@ database "Файловое хранилище" as storage
     end
   file --> api : Успешный ответ
   api --> web : 201 Created
-  web --> user : Отображение файла
+  web -> web : Отображение файла
+  user -> web : Посмотреть добавленный файл 
 
   else Ошибка отправки
     file --> api : Ошибка (400)
     api --> web : Показать текст ошибки
-    web --> user : "Превышен размер файла"
+    web -> web : "Превышен размер файла"
+    user -> web : Посмотреть ошибку
   end
 
 
